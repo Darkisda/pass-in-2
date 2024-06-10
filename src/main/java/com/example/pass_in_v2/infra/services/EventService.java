@@ -7,10 +7,11 @@ import org.springframework.stereotype.Service;
 import com.example.pass_in_v2.application.adapters.inputs.CreateAttendeeInput;
 import com.example.pass_in_v2.application.adapters.inputs.CreateEventInput;
 import com.example.pass_in_v2.application.adapters.outputs.AttendeeIdOutput;
+import com.example.pass_in_v2.application.adapters.outputs.EventDetailOutput;
 import com.example.pass_in_v2.application.adapters.outputs.EventIdOutput;
-import com.example.pass_in_v2.application.adapters.outputs.EventsOutput;
 import com.example.pass_in_v2.application.usecases.AttendeesFromEvent;
 import com.example.pass_in_v2.application.usecases.CreateEvent;
+import com.example.pass_in_v2.application.usecases.FindEventById;
 import com.example.pass_in_v2.application.usecases.ListEvents;
 import com.example.pass_in_v2.application.usecases.RegisterAttendeeOnEvent;
 import com.example.pass_in_v2.domain.attendee.AttendeeCheckInAggregate;
@@ -25,9 +26,13 @@ public class EventService {
   private final EventJPARepository repository;
   private final AttendeeJPARepository attendeeRepository;
 
-  public EventsOutput listAll() {
+  public List<EventDetailOutput> listAll() {
     var useCase = new ListEvents(this.repository);
     return useCase.exec();
+  }
+
+  public EventDetailOutput findById(String eventId) {
+    return new FindEventById(repository).exec(eventId);
   }
 
   public EventIdOutput createEvent(CreateEventInput input) {
