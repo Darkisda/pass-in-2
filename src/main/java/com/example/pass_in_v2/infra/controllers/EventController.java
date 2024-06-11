@@ -19,6 +19,7 @@ import com.example.pass_in_v2.application.adapters.inputs.CreateEventInput;
 import com.example.pass_in_v2.application.adapters.outputs.AttendeeIdOutput;
 import com.example.pass_in_v2.application.adapters.outputs.EventDetailOutput;
 import com.example.pass_in_v2.application.adapters.outputs.EventIdOutput;
+import com.example.pass_in_v2.domain.attendee.AttendeeCheckInAggregate;
 import com.example.pass_in_v2.infra.services.EventService;
 
 import lombok.RequiredArgsConstructor;
@@ -47,8 +48,9 @@ public class EventController {
   }
 
   @GetMapping("/{eventId}/attendees")
-  public ResponseEntity<Object> attendeesFromEvent(@PathVariable String eventId) {
-    var attendeesFromEvent = this.service.attendeesFromEvent(eventId);
+  public ResponseEntity<List<EntityModel<AttendeeCheckInAggregate>>> attendeesFromEvent(@PathVariable String eventId) {
+    var attendeesFromEvent = this.service.attendeesFromEvent(eventId).stream().map(attendee -> EntityModel.of(attendee)
+        .add(linkTo(methodOn(AttendeeController.class).findById(attendee.getId())).withSelfRel())).toList();
     return ResponseEntity.ok().body(attendeesFromEvent);
   }
 
